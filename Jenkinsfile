@@ -4,6 +4,6 @@ node {
     stage('Checkout') {
         def scmVars = checkout scm
 
-        echo scmVars
+        echo scmVars.GIT_COMMIT
     }
 }
