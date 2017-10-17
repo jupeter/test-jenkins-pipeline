@@ -4,6 +4,6 @@ node {
     stage('Checkout') {
         def scmVars = checkout scm
 
-        echo $CHANGE_AUTHOR
+        echo $env.CHANGE_AUTHOR
     }
 }
