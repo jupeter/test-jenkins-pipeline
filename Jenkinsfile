@@ -9,11 +9,10 @@ node {
     }
 
     stage('Docker in docker test') {
-        node('ecs-node') {
-            node('ecs-java') {
-                echo "a"
+        docker.image("mysql:5.7.19").withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
+            node('ecs-node') {
+                echo "No to sru..."
             }
-
         }
     }
 }
