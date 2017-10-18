@@ -9,9 +9,16 @@ node {
     }
 
     stage('Docker in docker test') {
-        docker.image("mysql:5.7.19").withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
-            node('ecs-node') {
-                echo "No to sru..."
+        node('ecs-java-build') {
+            ansiColor('xterm') {
+                try {
+                    sh 'wget "https://git.io/sbt"'
+                    sh 'chmod 0755 sbt'
+                } catch (e) {
+                    currentBuild.result = 'FAILURE'
+                    cleanWs()
+                    throw e
+                }
             }
         }
     }
