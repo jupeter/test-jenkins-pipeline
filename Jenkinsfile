@@ -14,6 +14,7 @@ node {
                 try {
                     sh 'wget "https://git.io/sbt"'
                     sh 'chmod 0755 sbt'
+                    sh './sbt -h'
                 } catch (e) {
                     currentBuild.result = 'FAILURE'
                     cleanWs()
