@@ -41,6 +41,6 @@ stage('Try to setup docker container') {
 //}
 
 def containerIp(container) {
-  sh "ip -4 addr show eth0 | grep 'inet ' | awk '{print \$2}' | awk -F '/' '{print \$1}'' > host.ip"
+  sh "ip -4 addr show eth0 | grep 'inet ' | awk '{print \$2}' | awk -F '/' '{print \$1}' > host.ip"
   readFile('host.ip').trim()
 }
