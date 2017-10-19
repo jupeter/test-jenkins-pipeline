@@ -10,22 +10,29 @@ stage('Checkout') {
     }
 }
 
-stage('Very important questions') {
-    input("Do you want to deploy?")
-}
-
-stage('Docker in docker test') {
-    node('ecs-java-build') {
-        ansiColor('xterm') {
-            try {
-                sh 'wget "https://git.io/sbt"'
-                sh 'chmod 0755 sbt'
-                sh './sbt -h'
-            } catch (e) {
-                currentBuild.result = 'FAILURE'
-                cleanWs()
-                throw e
-            }
-        }
+stage('Try to setup docker container') {
+    docker.image('mysql:5').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
+        echo "hehe"
     }
 }
+//stage('Try to setup deploy promnt') {
+//    input("Do you want to deploy?")
+//}
+
+
+//
+//stage('Docker in docker test') {
+//    node('ecs-java-build') {
+//        ansiColor('xterm') {
+//            try {
+//                sh 'wget "https://git.io/sbt"'
+//                sh 'chmod 0755 sbt'
+//                sh './sbt -h'
+//            } catch (e) {
+//                currentBuild.result = 'FAILURE'
+//                cleanWs()
+//                throw e
+//            }
+//        }
+//    }
+//}
