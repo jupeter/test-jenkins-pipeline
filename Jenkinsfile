@@ -41,6 +41,6 @@ stage('Try to setup docker container') {
 //}
 
 def hostIp(container) {
-  sh "/sbin/ip route|awk '/default/ { print $3 }' > host.ip"
+  sh "/sbin/ip route|awk '/default/ { print \$3 }' > host.ip"
   readFile('host.ip').trim()
 }
