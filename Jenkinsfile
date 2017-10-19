@@ -39,3 +39,8 @@ stage('Try to setup docker container') {
 //        }
 //    }
 //}
+
+def hostIp(container) {
+  sh "docker inspect -f {{.NetworkSettings.IPAddress}} ${container.id} > host.ip"
+  readFile('host.ip').trim()
+}
