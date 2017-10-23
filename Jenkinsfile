@@ -1,5 +1,10 @@
 #!groovy
 
+environment {
+    ECR_URL = 'https://506212532265.dkr.ecr.eu-central-1.amazonaws.com/mestudent-registry'
+    ECR_CREDENTIALS = 'ecr:eu-central-1:506212532265:repository/mestudent-registry'
+}
+
 stage('Checkout') {
     node {
         def scmVars = checkout scm
@@ -7,6 +12,12 @@ stage('Checkout') {
         echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
         echo "Base name: ${env.JOB_BASE_NAME} (like jupeter)"
 
+    }
+}
+
+stage('Try to push') {
+    docker.withRegistry(${env.ECR_URL}, ${env.ECR_CREDENTIALS}) {
+        docker.image('nginx').push('latest')
     }
 }
 
