@@ -11,12 +11,19 @@ stage('Checkout') {
 }
 
 stage('Try to setup docker container') {
-    docker.image('mysql:5').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
-        echo "no to sru"
-        def ip = containerIp()
-        sh "export MESTUDENT_TEST_DB_HOST=${ip} >> .env"
+    docker.image('mysql:5.7.19').withRun('-e "MYSQL_ROOT_PASSWORD=letsrock" -e "MYSQL_DATABASE=test-istudent" -p 3306:3306') { c ->
 
-        echo "ip: ${ip}"
+        def ip = containerIp()
+        echo "MySQL container IP: ${ip}"
+        sh "echo \"export MESTUDENT_TEST_DB_HOST=${ip}\" >> conf.env"
+        sh "echo \"export MESTUDENT_TEST_DB_USER=root\" >> conf.env"
+        sh "echo \"export MESTUDENT_TEST_DB_PASSWORD=letsrock\" >> conf.env"
+
+        sh 'cat ./conf.env'
+        sh '. ./conf.env'
+
+        sh "mysql --host=${ip} --user=root --port=3306 --password=letsrock --database=test-istudent"
+
     }
 }
 //stage('Try to setup deploy promnt') {
