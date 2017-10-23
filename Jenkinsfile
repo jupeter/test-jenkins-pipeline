@@ -13,7 +13,8 @@ stage('Checkout') {
 stage('Try to setup docker container') {
     docker.image('mysql:5').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
         echo "no to sru"
-        def ip = containerIp(c)
+        def ip = containerIp()
+        sh s"export MESTUDENT_TEST_DB_HOST=${ip} >> .env"
 
         echo "ip: ${ip}"
     }
@@ -40,7 +41,7 @@ stage('Try to setup docker container') {
 //    }
 //}
 
-def containerIp(container) {
-  sh "ip -4 addr show eth0 | grep 'inet ' | awk '{print \$2}' | awk -F '/' '{print \$1}' > host.ip"
-  readFile('host.ip').trim()
+def containerIp() {
+    sh "ip -4 addr show eth0 | grep 'inet ' | awk '{print \$2}' | awk -F '/' '{print \$1}' > host.ip"
+    readFile('host.ip').trim()
 }
