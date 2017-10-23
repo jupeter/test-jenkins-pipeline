@@ -11,7 +11,7 @@ stage('Checkout') {
 }
 
 stage('Try to setup docker container') {
-    docker.image('mysql:5.7.19').withRun('-e "MYSQL_ROOT_PASSWORD=letsrock" -e "MYSQL_DATABASE=test-istudent" -p 3306:3306') { c ->
+    docker.image('mysql:5.7.19').withRun('-e "MYSQL_ROOT_PASSWORD=letsrock" -e "MYSQL_DATABASE=test-istudent"') { c ->
 
         def ip = containerIp()
         echo "MySQL container IP: ${ip}"
