@@ -11,19 +11,22 @@ stage('Checkout') {
 }
 
 stage('Try to setup docker container') {
-    docker.image('mysql:5.7.19').withRun('-e "MYSQL_ROOT_PASSWORD=letsrock" -e "MYSQL_DATABASE=test-istudent"') { c ->
+    Random random = new Random()
+    mysqlPort = random.nextInt(50000) + 10000
+    docker.image('mysql:5.7.19').withRun("-e \"MYSQL_ROOT_PASSWORD=letsrock\" -e \"MYSQL_DATABASE=test-istudent\" -p $mysqlPort:3306") { c ->
 
-        def ip = containerIp()
-        echo "MySQL container IP: ${ip}"
+        def ip = containerIp(c.id)
+        echo "MySQL container '${c.id}', IP: ${ip}."
         sh "echo \"export MESTUDENT_TEST_DB_HOST=${ip}\" >> conf.env"
         sh "echo \"export MESTUDENT_TEST_DB_USER=root\" >> conf.env"
         sh "echo \"export MESTUDENT_TEST_DB_PASSWORD=letsrock\" >> conf.env"
+        sh "echo \"export MESTUDENT_TEST_DB_PORT=3306\" >> conf.env"
 
-        sh 'cat ./conf.env'
         sh '. ./conf.env'
 
-        sh "mysql --host=${ip} --user=root --port=3306 --password=letsrock --database=test-istudent"
-
+        node('ecs-java-build') {
+            sh "mysql --host=${ip} --user=root --port=3306 --password=letsrock --database=test-istudent"
+        }
     }
 }
 //stage('Try to setup deploy promnt') {
@@ -48,7 +51,7 @@ stage('Try to setup docker container') {
 //    }
 //}
 
-def containerIp() {
-    sh "ip -4 addr show eth0 | grep 'inet ' | awk '{print \$2}' | awk -F '/' '{print \$1}' > host.ip"
+def containerIp(id) {
+    sh "docker inspect -f '{{ .NetworkSettings.IPAddress }}' $id > host.ip"
     readFile('host.ip').trim()
 }
