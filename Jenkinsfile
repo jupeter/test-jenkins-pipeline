@@ -14,7 +14,7 @@ stage('Try to setup docker container') {
     docker.image('mysql:5').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw" -p 3306:3306') { c ->
         echo "no to sru"
         def ip = containerIp()
-        sh 'export MESTUDENT_TEST_DB_HOST='+$ip+' >> .env'
+        sh "export MESTUDENT_TEST_DB_HOST=${ip} >> .env"
 
         echo "ip: ${ip}"
     }
