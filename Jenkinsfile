@@ -16,8 +16,10 @@ stage('Checkout') {
 }
 
 stage('Try to push') {
-    docker.withRegistry(${env.ECR_URL}, ${env.ECR_CREDENTIALS}) {
-        docker.image('nginx').push('latest')
+    node {
+        docker.withRegistry(${env.ECR_URL}, ${env.ECR_CREDENTIALS}) {
+            docker.image('nginx').push('latest')
+        }
     }
 }
 
