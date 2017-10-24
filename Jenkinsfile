@@ -5,6 +5,8 @@ ecr = [
     credentials: 'ecr:eu-central-1:ecr-credentials'
 ]
 
+def mainScmGitCommit = null
+
 stage('Checkout') {
     node {
         def scmVars = checkout scm
@@ -12,6 +14,8 @@ stage('Checkout') {
         echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
         echo "Base name: ${env.JOB_BASE_NAME} (like jupeter)"
         echo "GIT commit hash: ${scmVars.GIT_COMMIT}"
+
+        mainScmGitCommit = scmVars.GIT_COMMIT
 
     }
 }
@@ -52,7 +56,7 @@ stage('Checkout') {
 stage('Get checkout in container') {
     node('ecs-java-build') {
         ansiColor('xterm') {
-            def commitHash = checkout(scm).GIT_COMMIT
+            def commitHash = mainScmGitCommit
             echo "Commit: $commitHash"
         }
     }
