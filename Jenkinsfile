@@ -13,12 +13,15 @@ def mainScmGitCommit = null
 stage('Checkout') {
     node {
         def scmVars = checkout([$class: 'GitSCM',
-                  extensions: [
-                          [
-                                  $class: 'CloneOption',
-                                  reference: '/mnt/cluster/git-reference/test-jenkins-pipeline.git'
-                          ]
-                  ],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [
+                [
+                    $class: 'CloneOption',
+                    depth: 0,
+                    noTags: true,
+                    reference: '/mnt/cluster/git-reference/test-jenkins-pipeline.git'
+                ]
+            ],
         ])
 
         echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
