@@ -1,5 +1,8 @@
 #!groovy
 
+extWorkspace = exwsAllocate 'diskpool1'
+
+
 ecr = [
     url: 'https://506212532265.dkr.ecr.eu-central-1.amazonaws.com',
     credentials: 'ecr:eu-central-1:ecr-credentials'
@@ -56,8 +59,11 @@ stage('Checkout') {
 stage('Get checkout in container') {
     node('ecs-java') {
         ansiColor('xterm') {
-            def commitHash = mainScmGitCommit
-            echo "Commit: $commitHash"
+            exws (extWorkspace) {
+
+                def commitHash = mainScmGitCommit
+                echo "Commit: $commitHash"
+            }
         }
     }
 }
