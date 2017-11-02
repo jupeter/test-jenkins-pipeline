@@ -12,9 +12,7 @@ def mainScmGitCommit = null
 
 stage('Checkout') {
     node {
-        def scmVars = checkout scm
-
-        checkout([$class: 'GitSCM',
+        def scmVars = checkout([$class: 'GitSCM',
                   extensions: [
                           [
                                   $class: 'CloneOption',
