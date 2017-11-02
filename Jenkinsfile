@@ -24,6 +24,8 @@ stage('Checkout') {
             ],
         ])
 
+        envVarsForTool()
+
         echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
         echo "Base name: ${env.JOB_BASE_NAME} (like jupeter)"
         echo "GIT commit hash: ${scmVars.GIT_COMMIT}"
