@@ -54,7 +54,7 @@ stage('Checkout') {
 
 //
 stage('Get checkout in container') {
-    node('ecs-java-build') {
+    node('ecs-java') {
         ansiColor('xterm') {
             def commitHash = mainScmGitCommit
             echo "Commit: $commitHash"
