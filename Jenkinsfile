@@ -4,8 +4,8 @@ extWorkspace = exwsAllocate 'diskpool1'
 
 
 ecr = [
-    url: 'https://506212532265.dkr.ecr.eu-central-1.amazonaws.com',
-    credentials: 'ecr:eu-central-1:ecr-credentials'
+        url: 'https://506212532265.dkr.ecr.eu-central-1.amazonaws.com',
+        credentials: 'ecr:eu-central-1:ecr-credentials'
 ]
 
 def mainScmGitCommit = null
@@ -13,6 +13,15 @@ def mainScmGitCommit = null
 stage('Checkout') {
     node {
         def scmVars = checkout scm
+
+        checkout([$class: 'GitSCM',
+                  extensions: [
+                          [
+                                  $class: 'CloneOption',
+                                  reference: '/mnt/cluster/git-reference/test-jenkins-pipeline.git'
+                          ]
+                  ],
+        ])
 
         echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
         echo "Base name: ${env.JOB_BASE_NAME} (like jupeter)"
