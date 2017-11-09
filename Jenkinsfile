@@ -146,7 +146,7 @@ def scmCheckout() {
     ])
 }
 
-
+                                            
 def getUsername() {
      def build = currentBuild.rawBuild
      def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
