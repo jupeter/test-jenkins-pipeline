@@ -150,7 +150,7 @@ def getUsername() {
     }
 
 
-    def cause = build.getCause(hudson.model.Cause$UserIdCause)
+    def cause = build.getCause(org.jenkinsci.plugins.github.pullrequest.GitHubPRCause)
 
     if (cause != null) {
         // git automatic build
