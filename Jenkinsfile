@@ -10,38 +10,14 @@ ecr = [
 
 def mainScmGitCommit = null
 
-stage('Checkout') {
-    node {
-        def scmVars = checkout([$class: 'GitSCM',
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-                [
-                    $class: 'CloneOption',
-                    depth: 0,
-                    noTags: true,
-                    reference: '/mnt/cluster/git-reference/test-jenkins-pipeline.git'
-                ]
-            ],
-        ])
+// stage('Checkout') {
+//     node('ecs-java') {
 
-        envVarsForTool()
-
-        echo "Job name: ${env.JOB_NAME} (like jupeter/test-jenkins-pipeline/master)"
-        echo "Base name: ${env.JOB_BASE_NAME} (like jupeter)"
-        echo "GIT commit hash: ${scmVars.GIT_COMMIT}"
-
-        mainScmGitCommit = scmVars.GIT_COMMIT
-
-    }
-}
-//
-//stage('Try to push') {
-//    node {
-//        docker.withRegistry(ecr['url'], ecr['credentials']) {
-//            docker.image('nginx').push('latest')
-//        }
-//    }
-//}
+//         docker.withRegistry(ecr['url'], ecr['credentials']) {
+//             docker.image('mestudent').push('7bf1b84279abdb63924d20fd97d057d5bcf331cd')
+//         }
+//     }
+// }
 //
 //stage('Try to setup docker container') {
 //    Random random = new Random()
@@ -62,23 +38,52 @@ stage('Checkout') {
 //        }
 //    }
 //}
-//stage('Try to setup deploy promnt') {
-//    input("Do you want to deploy?")
+// stage('Try to setup deploy promnt') {
+//     input("Do you want to deploy?")
+// }
+
+stage('Try to get env user') {
+    echo "Author: ${env.CHANGE_AUTHOR}"
+}
+
+//stage('Try to cache node') {
+//    node {
+//        def baseName = getProjectName()
+//        def reference = "/mnt/cluster/node-reference/${baseName}"
+//        Random random = new Random()
+//        tempDir = random.nextInt(50000) + 10000
+//
+//        sh 'mkdir node_modules || true'
+//        sh 'touch node_modules/sample_file2 || true'
+//
+//        // check and use cache
+//        echo "Check if we got cache and re-use it"
+//        sh "if [ -d $reference/node_modules ]; then rm -R ./node_modules; cp -R $reference/node_modules .; fi"
+//
+//        // cache
+//        echo "Cache last build"
+//        sh """
+//            mkdir -p $reference
+//            cp -R node_modules $reference/node_modules.$tempDir
+//            rm -R $reference/node_modules || true
+//            mv $reference/node_modules.$tempDir $reference/node_modules
+//        """
+//        sh ""
+//    }
 //}
 
-
 //
-stage('Get checkout in container') {
-    node('ecs-java') {
-        ansiColor('xterm') {
-            exws (extWorkspace) {
-
-                def commitHash = mainScmGitCommit
-                echo "Commit: $commitHash"
-            }
-        }
-    }
-}
+//stage('Get checkout in container') {
+//    node('ecs-java') {
+//        ansiColor('xterm') {
+//            exws (extWorkspace) {
+//
+//                def commitHash = mainScmGitCommit
+//                echo "Commit: $commitHash"
+//            }
+//        }
+//    }
+//}
 //stage('Docker in docker test') {
 //    node('ecs-java-build') {
 //        ansiColor('xterm') {
@@ -99,3 +104,37 @@ stage('Get checkout in container') {
 //    sh "docker inspect -f '{{ .NetworkSettings.IPAddress }}' $id > host.ip"
 //    readFile('host.ip').trim()
 //}
+
+def getProjectName() {
+    return env.JOB_NAME.substring(0, env.JOB_NAME.indexOf("/"))
+}
+
+def getScmUrl() {
+    def userConfig = scm.userRemoteConfigs
+    return userConfig[0].url
+}
+
+def getScmCommitHash() {
+    mainScmGitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+    return mainScmGitCommit
+}
+
+def scmCheckout() {
+    def baseName = getProjectName()
+    def reference = "/mnt/cluster/git-reference/${baseName}/test-jenkins-pipeline.git"
+
+    echo "Repository url: ${url}"
+    echo "Cache reference: ${reference}"
+
+    checkout([
+            $class: 'GitSCM',
+            branches: scm.branches,
+            extensions: scm.extensions + [[
+                                                  $class: 'CloneOption',
+                                                  depth: 0,
+                                                  noTags: true,
+                                                  reference: "$reference"
+                                          ]],
+            userRemoteConfigs: scm.userRemoteConfigs
+    ])
+}
