@@ -149,8 +149,7 @@ def getUsername() {
         return cause.getUserId()
     }
 
-
-    def cause = build.getCause(org.jenkinsci.plugins.github.pullrequest.GitHubPRCause)
+    cause = build.getCause(org.jenkinsci.plugins.github.pullrequest.GitHubPRCause)
 
     if (cause != null) {
         // git automatic build
