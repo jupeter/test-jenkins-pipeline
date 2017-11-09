@@ -146,7 +146,7 @@ def scmCheckout() {
     ])
 }
 
-                                            
+
 def getUsername() {
      def build = currentBuild.rawBuild
      def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
@@ -155,17 +155,13 @@ def getUsername() {
          return cause.getUserId()
      }
 
-    def changeLogSets = currentBuild.changeSets
+    def changeAuthors = currentBuild.changeSets.collect { set ->
+        set.collect { entry -> entry.author.id }
+    }.flatten()
 
-    if(changeLogSets.size == 0) {
+    if(changeAuthors.size == 0) {
         return null
     }
 
-    def entries = changeLogSets[0].items
-
-    if(entries.size == 0) {
-        return null
-    }
-
-    return entries[0].author.id
+    return changeAuthors[0]
 }
