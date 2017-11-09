@@ -42,9 +42,24 @@ def mainScmGitCommit = null
 // }
 
 stage('Try to get username') {
+    node {
+        checkout scm
+
+        def SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+
+    if (SCMCause != null) {
+        // git automatic build
+        println SCMCause.properties
+
+        //return cause.getUserId()
+    }
+
+
     def username = getUsername()
-    
+
     echo "Author: ${username}"
+    }
+
 }
 
 //stage('Try to cache node') {
@@ -142,12 +157,12 @@ def scmCheckout() {
 
 
 def getUsername() {
-    def build = currentBuild.rawBuild
-    def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-    if (cause != null) {
-        // manual build
-        return cause.getUserId()
-    }
+    // def build = currentBuild.rawBuild
+    // def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+    // if (cause != null) {
+    //     // manual build
+    //     return cause.getUserId()
+    // }
 
     def SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
 
