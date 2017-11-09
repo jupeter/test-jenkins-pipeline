@@ -12,7 +12,6 @@ def mainScmGitCommit = null
 
 // stage('Checkout') {
 //     node('ecs-java') {
-
 //         docker.withRegistry(ecr['url'], ecr['credentials']) {
 //             docker.image('mestudent').push('7bf1b84279abdb63924d20fd97d057d5bcf331cd')
 //         }
@@ -42,8 +41,10 @@ def mainScmGitCommit = null
 //     input("Do you want to deploy?")
 // }
 
-stage('Try to get env user') {
-    echo "Author: ${env.CHANGE_AUTHOR}"
+stage('Try to get username') {
+    def username = getUsername()
+    
+    echo "Author: ${username}"
 }
 
 //stage('Try to cache node') {
@@ -137,4 +138,11 @@ def scmCheckout() {
                                           ]],
             userRemoteConfigs: scm.userRemoteConfigs
     ])
+}
+
+
+def getUsername() {
+    def build = currentBuild.rawBuild
+    def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+    return cause.getUserId()
 }
