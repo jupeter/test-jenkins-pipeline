@@ -144,5 +144,20 @@ def scmCheckout() {
 def getUsername() {
     def build = currentBuild.rawBuild
     def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-    return cause.getUserId()
+    if (cause != null) {
+        // manual build
+        return cause.getUserId()
+    }
+
+
+    def cause = build.getCause(hudson.model.Cause$UserIdCause)
+
+    if (cause != null) {
+        // git automatic build
+        print cause
+
+        //return cause.getUserId()
+    }
+    
+    return null
 }
