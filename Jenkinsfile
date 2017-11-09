@@ -149,7 +149,7 @@ def getUsername() {
         return cause.getUserId()
     }
 
-    dev SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+    def SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
 
     if (SCMCause) {
         // git automatic build
