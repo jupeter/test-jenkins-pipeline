@@ -46,14 +46,9 @@ stage('Try to get username') {
     node {
         checkout scm
 
-        def changeLogSets = currentBuild.changeSets
-for (int i = 0; i < changeLogSets.size(); i++) {
-    def entries = changeLogSets[i].items
-    for (int j = 0; j < entries.length; j++) {
-        def entry = entries[j]
-        echo "${entry.commitId} by ${entry.author.id} on ${new Date(entry.timestamp)}: ${entry.msg}"
-    }
-}
+        def user = getUsername()
+
+        echo "User: ${user}"
     }
 
 }
@@ -153,21 +148,24 @@ def scmCheckout() {
 
 
 def getUsername() {
-    // def build = currentBuild.rawBuild
-    // def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-    // if (cause != null) {
-    //     // manual build
-    //     return cause.getUserId()
-    // }
+     def build = currentBuild.rawBuild
+     def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+     if (cause != null) {
+         // manual build
+         return cause.getUserId()
+     }
 
-    def SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+    def changeLogSets = currentBuild.changeSets
 
-    if (SCMCause != null) {
-        // git automatic build
-        println SCMCause.properties
-
-        //return cause.getUserId()
+    if(changeLogSets.length == 0) {
+        return null
     }
-    
-    return null
+
+    def entries = changeLogSets[0].items
+
+    if(entries.length == 0) {
+        return null
+    }
+
+    return entries[0].author.id
 }
