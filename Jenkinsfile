@@ -157,13 +157,13 @@ def getUsername() {
 
     def changeLogSets = currentBuild.changeSets
 
-    if(changeLogSets.length == 0) {
+    if(changeLogSets.size == 0) {
         return null
     }
 
     def entries = changeLogSets[0].items
 
-    if(entries.length == 0) {
+    if(entries.size == 0) {
         return null
     }
 
