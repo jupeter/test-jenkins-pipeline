@@ -144,16 +144,16 @@ def scmCheckout() {
 def getUsername() {
     def build = currentBuild.rawBuild
     def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-    if (cause != null) {
+    if (cause) {
         // manual build
         return cause.getUserId()
     }
 
-    cause = build.getCause(org.jenkinsci.plugins.github.pullrequest.GitHubPRCause)
+    dev SCMCause  = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
 
-    if (cause != null) {
+    if (SCMCause) {
         // git automatic build
-        print cause
+        println SCMCause.properties
 
         //return cause.getUserId()
     }
