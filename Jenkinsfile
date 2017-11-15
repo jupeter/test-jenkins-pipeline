@@ -51,6 +51,7 @@ stage('Try to get username') {
         echo "PR User test: ${user}"
 
         echo "Test2: ${env.CHANGE_AUTHOR}"
+        echo "CHange target: ${env.CHANGE_TARGET}"
     }
 
 }
