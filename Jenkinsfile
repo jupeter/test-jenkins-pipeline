@@ -48,7 +48,7 @@ stage('Try to get username') {
 
         def user = getUsername()
 
-        echo "User: ${user}"
+        echo "PR User test: ${user}"
     }
 
 }
