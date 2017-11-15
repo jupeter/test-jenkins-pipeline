@@ -49,6 +49,8 @@ stage('Try to get username') {
         def user = getUsername()
 
         echo "PR User test: ${user}"
+
+        echo "Test2: ${env.CHANGE_AUTHOR}"
     }
 
 }
