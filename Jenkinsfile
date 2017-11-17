@@ -10,13 +10,12 @@ ecr = [
 
 def mainScmGitCommit = null
 
-// stage('Checkout') {
-//     node('ecs-java') {
-//         docker.withRegistry(ecr['url'], ecr['credentials']) {
-//             docker.image('mestudent').push('7bf1b84279abdb63924d20fd97d057d5bcf331cd')
-//         }
-//     }
-// }
+stage('Checkout') {
+    node {
+        checkout scm
+    }
+}
+
 //
 //stage('Try to setup docker container') {
 //    Random random = new Random()
