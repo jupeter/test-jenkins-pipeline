@@ -42,19 +42,40 @@ def mainScmGitCommit = null
 // }
 
 
-stage('Try to get username') {
+//stage('Try to get username') {
+//    node {
+//        checkout scm
+//
+//        def user = getUsername()
+//
+//        echo "PR User test: ${user}"
+//
+//        echo "Test2: ${env.CHANGE_AUTHOR}"
+//        echo "CHange target: ${env.CHANGE_TARGET}"
+//    }
+//}
+
+stage('Status try123') {
     node {
-        checkout scm
+        context="context123"
+        setBuildStatus(context, 'Start trying failure...', 'PENDING')
+        setBuildStatus(context, 'Checked and fail', 'FAILURE')
 
-        def user = getUsername()
+        context="context2344"
+        setBuildStatus(context, 'Start trying passing...', 'PENDING')
+        setBuildStatus(context, 'Checked and pass', 'SUCCESS')
 
-        echo "PR User test: ${user}"
-
-        echo "Test2: ${env.CHANGE_AUTHOR}"
-        echo "CHange target: ${env.CHANGE_TARGET}"
     }
-
 }
+
+void setBuildStatus(context, message, state) {
+    // partially hard coded URL because of https://issues.jenkins-ci.org/browse/JENKINS-36961, adjust to your own GitHub instance
+    step([
+            $class: "GitHubCommitStatusSetter",
+            statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+    ]);
+}
+
 
 //stage('Try to cache node') {
 //    node {
@@ -150,13 +171,13 @@ def scmCheckout() {
 }
 
 
-def getUsername() {             
-     def build = currentBuild.rawBuild
-     def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-     if (cause != null) {
-         // manual build
-         return cause.getUserId()
-     }
+def getUsername() {
+    def build = currentBuild.rawBuild
+    def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+    if (cause != null) {
+        // manual build
+        return cause.getUserId()
+    }
 
     def changeAuthors = currentBuild.changeSets.collect { set ->
         set.collect { entry -> entry.author.id }
