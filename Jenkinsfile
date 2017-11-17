@@ -56,6 +56,7 @@ stage('Checkout') {
 
 stage('Status try123') {
     node {
+    echo "Test123"
         context="context123"
         setBuildStatus(context, 'Start trying failure...', 'PENDING')
         setBuildStatus(context, 'Checked and fail', 'FAILURE')
