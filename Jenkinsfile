@@ -36,9 +36,18 @@ stage('Checkout') {
 //        }
 //    }
 //}
-// stage('Try to setup deploy promnt') {
-//     input("Do you want to deploy?")
-// }
+
+stage('Try to setup deploy promnt') {
+    try {
+        timeout(time: 1, unit: 'HOURS') {
+            def feedback = input id: 'Deploy', message: "Does deploy works fine?", ok: 'Yes!', submitterParameter: 'submitter'
+
+            echo "Verification passed (accepted by: ${feedback.submitter})"
+        }
+    } catch(err) {
+        echo "Missing approve/reject before timeout or error."
+    }
+}
 
 
 //stage('Try to get username') {
@@ -53,29 +62,28 @@ stage('Checkout') {
 //        echo "CHange target: ${env.CHANGE_TARGET}"
 //    }
 //}
-
-stage('Status try123') {
-    node {
-    echo "Test123"
-        context="context123"
-        setBuildStatus(context, 'Start trying failure...', 'PENDING')
-        setBuildStatus(context, 'Checked and fail', 'FAILURE')
-
-        context="context2344"
-        setBuildStatus(context, 'Start trying passing...', 'PENDING')
-        setBuildStatus(context, 'Checked and pass', 'SUCCESS')
-
-    }
-}
-
-void setBuildStatus(context, message, state) {
-    // partially hard coded URL because of https://issues.jenkins-ci.org/browse/JENKINS-36961, adjust to your own GitHub instance
-    step([
-            $class: "GitHubCommitStatusSetter",
-            contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
-            statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-    ]);
-}
+//
+//stage('Status try123') {
+//    node {
+//        context="context123"
+//        setBuildStatus(context, 'Start trying failure...', 'PENDING')
+//        setBuildStatus(context, 'Checked and fail', 'FAILURE')
+//
+//        context="context2344"
+//        setBuildStatus(context, 'Start trying passing...', 'PENDING')
+//        setBuildStatus(context, 'Checked and pass', 'SUCCESS')
+//
+//    }
+//}
+//
+//void setBuildStatus(context, message, state) {
+//    // partially hard coded URL because of https://issues.jenkins-ci.org/browse/JENKINS-36961, adjust to your own GitHub instance
+//    step([
+//            $class: "GitHubCommitStatusSetter",
+//            contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+//            statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+//    ]);
+//}
 
 
 //stage('Try to cache node') {
