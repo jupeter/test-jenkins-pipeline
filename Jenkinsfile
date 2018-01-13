@@ -40,9 +40,9 @@ stage('Checkout') {
 stage('Try to setup deploy promnt') {
     try {
         timeout(time: 1, unit: 'HOURS') {
-            def feedback = input id: 'Deploy', message: "Does deploy works fine?", ok: 'Yes!', submitterParameter: 'submitter'
+            def feedback = input id: 'Deploy', message: "Does deploy works fine?", ok: 'Yes!', submitter: "MeStudent*Developers", submitterParameter: 'approver'
 
-            echo "Verification passed (accepted by: ${feedback.submitter})"
+            echo "Verification passed (accepted by: ${feedback.approver})"
         }
     } catch(err) {
         echo "Missing approve/reject before timeout or error."
