@@ -10,13 +10,12 @@ ecr = [
 
 def mainScmGitCommit = null
 
-// stage('Checkout') {
-//     node('ecs-java') {
-//         docker.withRegistry(ecr['url'], ecr['credentials']) {
-//             docker.image('mestudent').push('7bf1b84279abdb63924d20fd97d057d5bcf331cd')
-//         }
-//     }
-// }
+stage('Checkout') {
+    node {
+        checkout scm
+    }
+}
+
 //
 //stage('Try to setup docker container') {
 //    Random random = new Random()
@@ -37,21 +36,55 @@ def mainScmGitCommit = null
 //        }
 //    }
 //}
-// stage('Try to setup deploy promnt') {
-//     input("Do you want to deploy?")
-// }
 
+stage('Try to setup deploy promnt') {
+    try {
+        timeout(time: 1, unit: 'HOURS') {
+            def feedback = input(message: 'Should we proceed', submitter: "MeStudent*Developers", submitterParameter: 'approver', parameters:[booleanParam(defaultValue: false, description: '', name: 'promote')] )
 
-stage('Try to get username') {
-    node {
-        checkout scm
-
-        def user = getUsername()
-
-        echo "User: ${user}"
+            echo "Verification passed (accepted by: ${feedback.approver})"
+        }
+    } catch(err) {
+        echo "Missing approve/reject before timeout or error."
     }
-
 }
+
+
+//stage('Try to get username') {
+//    node {
+//        checkout scm
+//
+//        def user = getUsername()
+//
+//        echo "PR User test: ${user}"
+//
+//        echo "Test2: ${env.CHANGE_AUTHOR}"
+//        echo "CHange target: ${env.CHANGE_TARGET}"
+//    }
+//}
+//
+//stage('Status try123') {
+//    node {
+//        context="context123"
+//        setBuildStatus(context, 'Start trying failure...', 'PENDING')
+//        setBuildStatus(context, 'Checked and fail', 'FAILURE')
+//
+//        context="context2344"
+//        setBuildStatus(context, 'Start trying passing...', 'PENDING')
+//        setBuildStatus(context, 'Checked and pass', 'SUCCESS')
+//
+//    }
+//}
+//
+//void setBuildStatus(context, message, state) {
+//    // partially hard coded URL because of https://issues.jenkins-ci.org/browse/JENKINS-36961, adjust to your own GitHub instance
+//    step([
+//            $class: "GitHubCommitStatusSetter",
+//            contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+//            statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+//    ]);
+//}
+
 
 //stage('Try to cache node') {
 //    node {
@@ -147,13 +180,13 @@ def scmCheckout() {
 }
 
 
-def getUsername() {             
-     def build = currentBuild.rawBuild
-     def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
-     if (cause != null) {
-         // manual build
-         return cause.getUserId()
-     }
+def getUsername() {
+    def build = currentBuild.rawBuild
+    def cause = build.getCause(hudson.model.Cause.UserIdCause.class)
+    if (cause != null) {
+        // manual build
+        return cause.getUserId()
+    }
 
     def changeAuthors = currentBuild.changeSets.collect { set ->
         set.collect { entry -> entry.author.id }
