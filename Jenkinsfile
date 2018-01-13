@@ -40,7 +40,7 @@ stage('Checkout') {
 stage('Try to setup deploy promnt') {
     try {
         timeout(time: 1, unit: 'HOURS') {
-            def feedback = input(message: 'Should we proceed', submitter: "MeStudent*Developers", submitterParameter: 'approver' )
+            def feedback = input(message: 'Should we proceed', submitter: "MeStudent*Developers", submitterParameter: 'approver', parameters:[booleanParam(defaultValue: false, description: '', name: 'promote')] )
 
             echo "Verification passed (accepted by: ${feedback.approver})"
         }
